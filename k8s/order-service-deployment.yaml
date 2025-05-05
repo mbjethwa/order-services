@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: stox
+  labels:
+    app: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      serviceAccountName: order-service-account
+      containers:
+      - name: order-service
+        image: order-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        env:
+        - name: PROJECT_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: order-config
+              key: PROJECT_NAME
+        - name: PROJECT_VERSION
+          valueFrom:
+            configMapKeyRef:
+              name: order-config
+              key: PROJECT_VERSION
+        - name: PROJECT_DESCRIPTION
+          valueFrom:
+            configMapKeyRef:
+              name: order-config
+              key: PROJECT_DESCRIPTION
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: order-secrets
+              key: JWT_SECRET_KEY
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: order-secrets
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: order-secrets
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: order-config
+              key: POSTGRES_DB
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: order-config
+              key: POSTGRES_HOST
+        - name: POSTGRES_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: order-config
+              key: POSTGRES_PORT
+        - name: AUTH_SERVICE_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: order-config
+              key: AUTH_SERVICE_BASE_URL
+        - name: INVENTORY_SERVICE_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: order-config
+              key: INVENTORY_SERVICE_BASE_URL
+        - name: ORDER_SERVICE_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: order-config
+              key: ORDER_SERVICE_BASE_URL
+        livenessProbe:
+          httpGet:
+            path: /docs
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 60
+        readinessProbe:
+          httpGet:
+            path: /docs
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 60

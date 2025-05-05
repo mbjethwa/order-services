@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: order-service-rolebinding
+  namespace: stox
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: order-service-role
+subjects:
+- kind: ServiceAccount
+  name: order-service-account
+  namespace: stox

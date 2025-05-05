@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-other-services-to-order-service
+  namespace: stox
+spec:
+  podSelector:
+    matchLabels:
+      app: auth-service
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: auth-service
+    - podSelector:
+        matchLabels:
+          app: inventory-service
+    ports:
+    - protocol: TCP
+      port: 8000
+  policyTypes:
+  - Ingress

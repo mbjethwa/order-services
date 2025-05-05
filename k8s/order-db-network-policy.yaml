@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-order-service-to-order-db
+  namespace: stox
+spec:
+  podSelector:
+    matchLabels:
+      app: order-db
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: order-service
+    ports:
+    - protocol: TCP
+      port: 5432
+  policyTypes:
+  - Ingress
