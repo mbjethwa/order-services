@@ -1,4 +1,4 @@
-# Inventory Service
+# Order Service
 
 This document provides instructions for building and running the Inventory Service application locally or using Docker.
 
